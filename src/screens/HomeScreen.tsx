@@ -1,41 +1,71 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   SafeAreaView,
   ScrollView,
+  Animated,
+  Dimensions,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '../../App';
+import { useAppTheme } from '../contexts/ThemeContext';
+import TopNavBar from '../components/TopNavBar/TopNavBar';
 
-type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
+export const HomeScreen = () => {
+  const { theme, isDark } = useAppTheme();
+  const scrollY = useRef(new Animated.Value(0)).current;
 
-const HomeScreen: React.FC = () => {
-  const navigation = useNavigation<HomeScreenNavigationProp>();
+  const handleSearchPress = () => {
+    console.log('Search pressed');
+    // Navigate to search screen
+  };
+
+  const handleInfoPress = () => {
+    console.log('Info pressed');
+    // Show info modal or navigate
+  };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Welcome to Educase</Text>
-          <Text style={styles.subtitle}>Your Learning Platform</Text>
-        </View>
-
-        <View style={styles.features}>
-          <Text style={styles.sectionTitle}>Features</Text>
-          {['AI-Powered Learning', 'Interactive Content', 'Progress Tracking'].map(
-            (feature, index) => (
-              <View key={index} style={styles.featureItem}>
-                <View style={styles.featureIcon} />
-                <Text style={styles.featureText}>{feature}</Text>
-              </View>
-            )
-          )}
-        </View>
-      </ScrollView>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <TopNavBar
+        title="QuickCart"
+        onSearchPress={handleSearchPress}
+        onInfoPress={handleInfoPress}
+        animated={true}
+        scrollY={scrollY}
+      />
+      
+      <Animated.ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true }
+        )}
+      >
+        {/* Placeholder content for scrolling */}
+        {[...Array(20)].map((_, index) => (
+          <View
+            key={index}
+            style={[
+              styles.card,
+              {
+                backgroundColor: isDark ? '#1A1A1A' : '#F8FAFC',
+                borderColor: theme.colors.border,
+              },
+            ]}
+          >
+            <Text style={[styles.cardTitle, { color: theme.colors.text }]}>
+              Item {index + 1}
+            </Text>
+            <Text style={[styles.cardSubtitle, { color: '#1010' }]}>
+              Scroll to see navbar hide/show
+            </Text>
+          </View>
+        ))}
+      </Animated.ScrollView>
     </SafeAreaView>
   );
 };
@@ -43,59 +73,32 @@ const HomeScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+  },
+  scrollView: {
+    flex: 1,
+    marginTop: 56, // Height of navbar + status bar
   },
   scrollContent: {
-    padding: 20,
-    paddingBottom: 40,
+    padding: 16,
+    paddingTop: 8,
   },
-  header: {
-    alignItems: 'center',
-    marginTop: 40,
-    marginBottom: 40,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: '800',
-    color: '#0F2792',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#6B7280',
-  },
-  features: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 20,
+  card: {
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
+    borderWidth: 1,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#111827',
-    marginBottom: 16,
-  },
-  featureItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  featureIcon: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#0F2792',
-    marginRight: 12,
-  },
-  featureText: {
+  cardTitle: {
     fontSize: 16,
-    color: '#374151',
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  cardSubtitle: {
+    fontSize: 14,
   },
 });
-
-export default HomeScreen;

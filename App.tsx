@@ -1,37 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
+import { StatusBar } from 'react-native';
+
 import { store, persistor } from './src/store';
 import { LoadingProvider } from './src/contexts/LoadingContext';
+import { ThemeProvider, useAppTheme } from './src/contexts/ThemeContext';
 import LoadingManager from './src/components/Loading/LoadingManager';
-import HomeScreen from './src/screens/HomeScreen';
-
-// Define your navigation types
-export type RootStackParamList = {
-  Home: undefined;
-  // Add more screens here as needed
-};
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
+import { RootNavigator } from './src/navigation/RootNavigator';
 
 function AppContent() {
+  const { isDark } = useAppTheme();
+
   return (
-    <LoadingManager minDisplayTime={2000} showOnAppLaunch={true}>
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="Home"
-          screenOptions={{
-            headerShown: false,
-            gestureEnabled: true,
-            animation: 'slide_from_right',
-          }}
-        >
-          <Stack.Screen name="Home" component={HomeScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </LoadingManager>
+    <>
+      <StatusBar
+        barStyle={isDark ? 'light-content' : 'dark-content'}
+        backgroundColor="transparent"
+        translucent
+      />
+      <LoadingManager minDisplayTime={2000} showOnAppLaunch={true}>
+        <RootNavigator />
+      </LoadingManager>
+    </>
   );
 }
 
@@ -40,7 +31,7 @@ function App() {
 
   useEffect(() => {
     const initialize = async () => {
-      // Simulate async setup
+      // Simulate initial setup
       await new Promise<void>(resolve => {
         setTimeout(() => resolve(), 500);
       });
@@ -58,9 +49,11 @@ function App() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <LoadingProvider>
-          <AppContent />
-        </LoadingProvider>
+        <ThemeProvider>
+          <LoadingProvider>
+            <AppContent />
+          </LoadingProvider>
+        </ThemeProvider>
       </PersistGate>
     </Provider>
   );

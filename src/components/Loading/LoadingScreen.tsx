@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Animated, Easing, Dimensions } from 'react-native';
-import { styles } from '../../styles/LoadingScreen/LoadingScreen.styles';
+import { View, Animated, Easing, Dimensions } from 'react-native';
 import { Svg, Circle, Path } from 'react-native-svg';
+import { useAppTheme } from '../../contexts/ThemeContext';
+import { createLoadingStyles } from '../../styles/LoadingScreen/LoadingScreen.styles';
 
 interface LoadingScreenProps {
   onAnimationComplete?: () => void;
@@ -12,6 +13,9 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
   onAnimationComplete,
   duration = 1800,
 }) => {
+  const { isDark } = useAppTheme();
+  const styles = createLoadingStyles(isDark);
+  
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
   const pulseAnim = useRef(new Animated.Value(1)).current;
@@ -103,6 +107,10 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
     };
   }, []);
 
+  // Logo colors based on theme
+  const primaryColor = isDark ? '#4F6FBF' : '#0F2792';
+  const secondaryColor = '#FFB800';
+
   return (
     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
       {/* Background gradient circles */}
@@ -153,21 +161,18 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
           style={[styles.logoContainer, { transform: [{ scale: pulseAnim }] }]}
         >
           <Svg width="90" height="90" viewBox="0 0 90 90">
-            {/* Outer circle - Blue */}
-            <Circle cx="45" cy="45" r="40" fill="#0F2792" />
-
-            {/* Inner circle - Yellow */}
-            <Circle cx="45" cy="45" r="30" fill="#FFB800" />
-
-            {/* Book/Education icon - White */}
+            {/* Outer circle */}
+            <Circle cx="45" cy="45" r="40" fill={primaryColor} />
+            {/* Inner circle */}
+            <Circle cx="45" cy="45" r="30" fill={secondaryColor} />
+            {/* Book/Education icon */}
             <Path
               d="M35 35 L55 35 L55 55 L45 50 L35 55 Z"
               fill="white"
               stroke="white"
               strokeWidth="2"
             />
-
-            {/* Small accent - White */}
+            {/* Small accent */}
             <Circle cx="45" cy="40" r="3" fill="white" />
           </Svg>
         </Animated.View>

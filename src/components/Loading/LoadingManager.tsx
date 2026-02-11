@@ -68,7 +68,6 @@ const LoadingManager: React.FC<LoadingManagerProps> = ({
   return (
     <View style={styles.container}>
       {children}
-
       {showLoading && (
         <LoadingScreen
           onAnimationComplete={handleAnimationComplete}
@@ -82,6 +81,7 @@ const LoadingManager: React.FC<LoadingManagerProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'transparent', // Important: Don't force white background
   },
 });
 
