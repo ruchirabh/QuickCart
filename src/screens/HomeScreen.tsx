@@ -1,28 +1,24 @@
 import React, { useRef } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   Animated,
   Platform,
   StatusBar,
+  FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import { useAppTheme } from '../contexts/ThemeContext';
 import TopNavBar from '../components/TopNavBar/TopNavBar';
+import ProductCard from '../components/HomeScreen/Card/ProductCard';
+import { use_GET_PRODUCTS } from '../hooks/endpoints/use_GET_PRODUCTS';
 
 export const HomeScreen = () => {
-  const { theme, isDark } = useAppTheme();
+  const { theme } = useAppTheme();
   const scrollY = useRef(new Animated.Value(0)).current;
 
-  const handleSearchPress = () => {
-    console.log('Search pressed');
-  };
+  const { products, loading, fetchProducts } = use_GET_PRODUCTS();
 
-  const handleInfoPress = () => {
-    console.log('Info pressed');
-  };
-
-  // Calculate navbar height based on platform
   const navbarHeight = Platform.OS === 'ios' ? 56 : 64;
   const statusBarHeight =
     Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0;
@@ -32,49 +28,28 @@ export const HomeScreen = () => {
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      {/* Navbar - absolutely positioned */}
-      <TopNavBar
-        title="QuickCart"
-        onSearchPress={handleSearchPress}
-        onInfoPress={handleInfoPress}
-        animated={true}
-        scrollY={scrollY}
-      />
+      <TopNavBar title="QuickCart" animated scrollY={scrollY} />
 
-      {/* Scrollable Content - with padding top to account for navbar */}
-      <Animated.ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingTop: totalNavbarHeight + 16 }, // Add padding to push content below navbar
-        ]}
-        showsVerticalScrollIndicator={false}
+      <Animated.FlatList
+        data={products}
+        keyExtractor={item => item.id.toString()}
+        contentContainerStyle={{
+          paddingTop: totalNavbarHeight + 1,
+          paddingHorizontal: 0,
+          paddingBottom: 16,
+        }}
+        renderItem={({ item }) => <ProductCard product={item} />}
+        onEndReached={fetchProducts}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={
+          loading ? <ActivityIndicator size="large" /> : null
+        }
         scrollEventThrottle={16}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: true },
         )}
-      >
-        {[...Array(20)].map((_, index) => (
-          <View
-            key={index}
-            style={[
-              styles.card,
-              {
-                backgroundColor: isDark ? '#1A1A1A' : '#F8FAFC',
-                borderColor: theme.colors.border,
-              },
-            ]}
-          >
-            <Text style={[styles.cardTitle, { color: theme.colors.text }]}>
-              Item {index + 1}
-            </Text>
-            <Text style={[styles.cardSubtitle, { color: theme.colors.text }]}>
-              Scroll to see navbar hide/show
-            </Text>
-          </View>
-        ))}
-      </Animated.ScrollView>
+      />
     </View>
   );
 };
@@ -82,32 +57,5 @@ export const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
-  card: {
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    borderWidth: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  cardTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  cardSubtitle: {
-    fontSize: 14,
-    opacity: 0.7,
   },
 });

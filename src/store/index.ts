@@ -1,22 +1,27 @@
-import { configureStore } from "@reduxjs/toolkit";
-import counterReducer from "../features/counterSlice";
+import { configureStore } from '@reduxjs/toolkit';
+import { persistReducer, persistStore } from 'redux-persist';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { combineReducers } from 'redux';
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { persistReducer, persistStore } from "redux-persist";
-import { PersistConfig } from "redux-persist";
+import counterReducer from '../features/counterSlice';
+import cartReducer from '../features/cartSlice';
 
-const persistConfig: PersistConfig<any> = {
-  key: "root",
+const persistConfig = {
+  key: 'root',
   storage: AsyncStorage,
+  whitelist: ['cart'], // Only persist cart
 };
 
-const persistedReducer = persistReducer(persistConfig, counterReducer);
+const rootReducer = combineReducers({
+  counter: counterReducer,
+  cart: cartReducer,
+});
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
-  reducer: {
-    counter: persistedReducer,
-  },
-  middleware: (getDefaultMiddleware) =>
+  reducer: persistedReducer,
+  middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: false,
     }),

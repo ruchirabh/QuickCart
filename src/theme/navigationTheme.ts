@@ -23,15 +23,15 @@ export const MyDarkTheme: AppTheme = {
   colors: {
     ...DarkTheme.colors,
     primary: '#60A5FA',
-    background: '#0A0A0A',
+    background: '#000000',
 
-    card: '#1E293B',
+    card: '#121212',        // 👈 darker
+    cardBackground: '#121212',
     text: '#F1F5F9',
-    border: '#334155',
+    border: '#1F1F1F',
     notification: '#F87171',
 
-    // Custom colors
-    textSecondary: '#94A3B8',
-    cardBackground: '#1E293B',
+    textSecondary: '#9CA3AF',
   },
 };
+
