@@ -13,17 +13,10 @@ import { useAppDispatch, useAppSelector } from '../../../hooks/reduxHooks';
 import { addToCart, removeFromCart } from '../../../features/cartSlice';
 import Button from '../../common/Button';
 import RatingStars from './RatingStars';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../../navigation/types';
-import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width / 2 - 20;
 
-type HomeScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  'Home'
->;
 interface Props {
   product: any;
   onViewDetails?: () => void;
@@ -32,7 +25,6 @@ interface Props {
 const ProductCard: React.FC<Props> = ({ product, onViewDetails }) => {
   const { theme, isDark } = useAppTheme();
   const dispatch = useAppDispatch();
-  const navigation = useNavigation<HomeScreenNavigationProp>();
 
   // Check if product is in cart
   const isInCart = useAppSelector(state =>
@@ -57,8 +49,18 @@ const ProductCard: React.FC<Props> = ({ product, onViewDetails }) => {
     dispatch(removeFromCart(product.id));
   };
 
+  const handleCardPress = () => {
+    if (onViewDetails) {
+      onViewDetails();
+    }
+  };
+
   return (
-    <View style={styles.card}>
+    <TouchableOpacity
+      activeOpacity={0.9}
+      onPress={handleCardPress}
+      style={styles.card}
+    >
       {/* Discount Badge */}
       {product.discountPercentage && (
         <View style={styles.discountBadge}>
@@ -71,11 +73,6 @@ const ProductCard: React.FC<Props> = ({ product, onViewDetails }) => {
       {/* Product Image */}
       <View style={styles.imageContainer}>
         <Image source={{ uri: product.thumbnail }} style={styles.image} />
-
-        {/* Favorite Button */}
-        {/* <TouchableOpacity style={styles.favoriteButton}>
-          <Icon name="heart-outline" size={20} color={theme.colors.text} />
-        </TouchableOpacity> */}
       </View>
 
       <View style={styles.content}>
@@ -103,13 +100,17 @@ const ProductCard: React.FC<Props> = ({ product, onViewDetails }) => {
           )}
         </View>
 
-        {/* Buttons */}
+        {/* Buttons - Stop propagation to prevent card press when clicking buttons */}
         <View style={styles.buttonContainer}>
           <Button
             title="Details"
             variant="outline"
             size="small"
-            onPress={()=>navigation.navigate('ProductDetails', { productId: product.id })}
+            onPress={() => {
+              if (onViewDetails) {
+                onViewDetails();
+              }
+            }}
             style={styles.detailsButton}
             textStyle={styles.buttonText}
           />
@@ -137,7 +138,7 @@ const ProductCard: React.FC<Props> = ({ product, onViewDetails }) => {
           )}
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -148,7 +149,6 @@ const createStyles = (theme: any, isDark: boolean) =>
       backgroundColor: theme.colors.card,
       borderRadius: 16,
       marginBottom: 16,
-   
       borderWidth: 1,
       borderColor: theme.colors.border,
       overflow: 'hidden',
@@ -180,15 +180,6 @@ const createStyles = (theme: any, isDark: boolean) =>
       color: '#FFF',
       fontSize: 11,
       fontWeight: '700',
-    },
-    favoriteButton: {
-      position: 'absolute',
-      top: 10,
-      right: 10,
-      backgroundColor: isDark ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.9)',
-      borderRadius: 20,
-      padding: 8,
-      zIndex: 1,
     },
     content: {
       padding: 12,

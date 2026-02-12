@@ -92,12 +92,10 @@ const ProductHeader: React.FC<ProductHeaderProps> = ({
         <View style={styles.ratingRow}>
           <RatingStars rating={rating} />
           <Text
-            style={[
-              styles.ratingCount,
-              { color: theme.colors.textSecondary },
-            ]}
+            style={[styles.ratingCount, { color: theme.colors.textSecondary }]}
           >
-            {rating.toFixed(1)} ({reviewCount} {reviewCount === 1 ? 'review' : 'reviews'})
+            {rating.toFixed(1)} ({reviewCount}{' '}
+            {reviewCount === 1 ? 'review' : 'reviews'})
           </Text>
         </View>
       </View>
@@ -116,9 +114,8 @@ const createStyles = (theme: any, isDark: boolean) =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      paddingTop: Platform.OS === 'android' 
-        ? (StatusBar.currentHeight || 0) + 8 
-        : 50, // Increased for iOS
+      paddingTop:
+        Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + 8 : 50, // Increased for iOS
       paddingHorizontal: 16,
       paddingBottom: 12,
       backgroundColor: 'transparent',
@@ -181,9 +178,8 @@ const createStyles = (theme: any, isDark: boolean) =>
       fontWeight: '700',
     },
     productInfo: {
-      paddingTop: Platform.OS === 'android' 
-        ? (StatusBar.currentHeight || 0) + 100 
-        : 120, // Increased to account for header height
+      paddingTop:
+        Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + 100 : 120, // Increased to account for header height
       paddingHorizontal: 20,
       paddingBottom: 20,
       backgroundColor: theme.colors.background,

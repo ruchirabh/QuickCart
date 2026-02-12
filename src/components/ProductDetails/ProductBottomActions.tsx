@@ -64,7 +64,7 @@ const createStyles = (theme: any, isDark: boolean) =>
       alignItems: 'center',
       justifyContent: 'space-between',
       paddingHorizontal: 20,
-      paddingVertical: 12,
+      paddingVertical: 26,
       borderTopWidth: 1,
       borderTopColor: theme.colors.border,
       shadowColor: '#000',
@@ -72,6 +72,7 @@ const createStyles = (theme: any, isDark: boolean) =>
       shadowOpacity: isDark ? 0.3 : 0.1,
       shadowRadius: 4,
       elevation: 10,
+    
     },
     priceInfo: {
       flex: 1,
