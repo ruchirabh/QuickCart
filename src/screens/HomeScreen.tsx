@@ -11,6 +11,7 @@ import {
   Text,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAppTheme } from '../contexts/ThemeContext';
 import { useAppSelector } from '../hooks/reduxHooks';
 import TopNavBar from '../components/TopNavBar/TopNavBar';
@@ -20,12 +21,18 @@ import { ProductCardShimmer } from '../components/Loading/ShimmerSkeleton';
 import { use_GET_PRODUCTS } from '../hooks/endpoints/use_GET_PRODUCTS';
 import { use_GET_CATEGORIES } from '../hooks/endpoints/Categories/use_GET_CATEGORIES';
 import { use_GET_PRODUCTS_BY_CATEGORY } from '../hooks/endpoints/Categories/use_GET_PRODUCTS_BY_CATEGORY';
+import type { RootStackParamList } from '../navigation/types';
 
 const { width } = Dimensions.get('window');
 
+type HomeScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'Home'
+>;
+
 export const HomeScreen = () => {
   const { theme } = useAppTheme();
-  const navigation = useNavigation();
+  const navigation = useNavigation<HomeScreenNavigationProp>();
   const scrollY = useRef(new Animated.Value(0)).current;
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -33,19 +40,16 @@ export const HomeScreen = () => {
   const [isCategoryLoading, setIsCategoryLoading] = useState(false);
 
   // Fetch all products
-  const { 
-    products: allProducts, 
-    loading: allProductsLoading, 
-    fetchProducts: fetchAllProducts, 
-    hasMore: hasMoreAll, 
-    refresh: refreshAll 
+  const {
+    products: allProducts,
+    loading: allProductsLoading,
+    fetchProducts: fetchAllProducts,
+    hasMore: hasMoreAll,
+    refresh: refreshAll,
   } = use_GET_PRODUCTS();
 
   // Fetch categories
-  const { 
-    categories, 
-    loading: categoriesLoading 
-  } = use_GET_CATEGORIES();
+  const { categories, loading: categoriesLoading } = use_GET_CATEGORIES();
 
   // Fetch products by category
   const {
@@ -53,29 +57,24 @@ export const HomeScreen = () => {
     loading: categoryProductsLoading,
     hasMore: hasMoreCategory,
     fetchProducts: fetchMoreCategoryProducts,
-    resetCategory,
   } = use_GET_PRODUCTS_BY_CATEGORY(selectedCategory);
 
   // Determine which products to display
-  const displayProducts = selectedCategory 
-    ? categoryProducts 
-    : allProducts;
-  
+  const displayProducts = selectedCategory ? categoryProducts : allProducts;
+
   const isLoading = selectedCategory
     ? categoryProductsLoading
     : allProductsLoading;
-  
-  const hasMore = selectedCategory
-    ? hasMoreCategory
-    : hasMoreAll;
+
+  const hasMore = selectedCategory ? hasMoreCategory : hasMoreAll;
 
   const fetchMore = selectedCategory
     ? fetchMoreCategoryProducts
     : fetchAllProducts;
 
   // Get cart item count from Redux
-  const cartItemCount = useAppSelector(state => 
-    state.cart.items.reduce((total, item) => total + item.quantity, 0)
+  const cartItemCount = useAppSelector(state =>
+    state.cart.items.reduce((total, item) => total + item.quantity, 0),
   );
 
   useEffect(() => {
@@ -93,8 +92,9 @@ export const HomeScreen = () => {
   const totalNavbarHeight = navbarHeight + statusBarHeight;
 
   const keyExtractor = useCallback(
-    (item: any, index: number) => `${item.id}-${index}-${selectedCategory || 'all'}`,
-    [selectedCategory]
+    (item: any, index: number) =>
+      `${item.id}-${index}-${selectedCategory || 'all'}`,
+    [selectedCategory],
   );
 
   const handleHomePress = async () => {
@@ -111,27 +111,27 @@ export const HomeScreen = () => {
   };
 
   const handleCartPress = () => {
-    navigation.navigate('Cart' as never);
+    navigation.navigate('Cart');
   };
 
   const handleSearchPress = () => {
-    navigation.navigate('Search' as never);
+    navigation.navigate('Search');
   };
 
   const handleInfoPress = () => {
-    navigation.navigate('Info' as never)
+    navigation.navigate('Info');
   };
 
   const handleSelectCategory = async (category: string | null) => {
     // Show shimmer immediately on category click
     setIsCategoryLoading(true);
-    
+
     // Scroll to top
     scrollY.setValue(0);
-    
+
     // Set selected category
     setSelectedCategory(category);
-    
+
     // Simulate minimum loading time for better UX
     setTimeout(() => {
       setIsCategoryLoading(false);
@@ -142,14 +142,17 @@ export const HomeScreen = () => {
     ({ item }: { item: any }) => (
       <ProductCard
         product={item}
+        onViewDetails={() =>
+          navigation.navigate('ProductDetails', { productId: item.id })
+        }
       />
     ),
-    []
+    [navigation],
   );
 
   const renderFooter = () => {
     if (isRefreshing || isCategoryLoading) return null;
-    
+
     if (isLoading && !isInitialLoading && !isRefreshing && !isCategoryLoading) {
       return (
         <View style={styles.footerContainer}>
@@ -164,7 +167,9 @@ export const HomeScreen = () => {
     if (!hasMore && displayProducts.length > 0) {
       return (
         <View style={styles.endContainer}>
-          <View style={[styles.endLine, { backgroundColor: theme.colors.border }]} />
+          <View
+            style={[styles.endLine, { backgroundColor: theme.colors.border }]}
+          />
           <Text style={[styles.endText, { color: theme.colors.textSecondary }]}>
             You've reached the end
           </Text>
@@ -187,9 +192,11 @@ export const HomeScreen = () => {
   // Show skeleton loader during initial load
   if (isInitialLoading) {
     return (
-      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-        <TopNavBar 
-          title="QuickCart" 
+      <View
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+      >
+        <TopNavBar
+          title="QuickCart"
           animated={false}
           cartItemCount={cartItemCount}
           onHomePress={handleHomePress}
@@ -197,13 +204,18 @@ export const HomeScreen = () => {
           onSearchPress={handleSearchPress}
           onInfoPress={handleInfoPress}
         />
-        <View style={{ paddingTop: totalNavbarHeight + 16, paddingHorizontal: 8 }}>
+        <View
+          style={{ paddingTop: totalNavbarHeight + 16, paddingHorizontal: 8 }}
+        >
           {/* Categories skeleton */}
           <View style={styles.categoriesSkeleton}>
             {[...Array(8)].map((_, index) => (
               <View
                 key={`cat-skel-${index}`}
-                style={[styles.categorySkeleton, { backgroundColor: theme.colors.border }]}
+                style={[
+                  styles.categorySkeleton,
+                  { backgroundColor: theme.colors.border },
+                ]}
               />
             ))}
           </View>
@@ -224,9 +236,9 @@ export const HomeScreen = () => {
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      <TopNavBar 
-        title="QuickCart" 
-        animated 
+      <TopNavBar
+        title="QuickCart"
+        animated
         scrollY={scrollY}
         cartItemCount={cartItemCount}
         onHomePress={handleHomePress}
@@ -237,13 +249,21 @@ export const HomeScreen = () => {
 
       {isRefreshing || (isCategoryLoading && !displayProducts.length) ? (
         // Show full screen of shimmers during refresh or category loading
-        <View style={[styles.refreshContainer, { paddingTop: totalNavbarHeight + 16 }]}>
+        <View
+          style={[
+            styles.refreshContainer,
+            { paddingTop: totalNavbarHeight + 16 },
+          ]}
+        >
           {/* Categories skeleton */}
           <View style={styles.categoriesSkeleton}>
             {[...Array(8)].map((_, index) => (
               <View
                 key={`cat-loading-skel-${index}`}
-                style={[styles.categorySkeleton, { backgroundColor: theme.colors.border }]}
+                style={[
+                  styles.categorySkeleton,
+                  { backgroundColor: theme.colors.border },
+                ]}
               />
             ))}
           </View>
@@ -277,7 +297,7 @@ export const HomeScreen = () => {
           showsVerticalScrollIndicator={false}
           onScroll={Animated.event(
             [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            { useNativeDriver: true }
+            { useNativeDriver: true },
           )}
         />
       )}

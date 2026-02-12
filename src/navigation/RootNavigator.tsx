@@ -9,6 +9,7 @@ import { RootStackParamList } from './types';
 import { HomeScreen } from '../screens/HomeScreen';
 import InfoScreen from '../screens/InfoScreen/InfoScreen';
 import SearchScreen from '../screens/SearchScreen/SearchScreen';
+import ProductDetailsScreen from '../screens/ProductDetailsScreen/ProductDetailsScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -31,6 +32,7 @@ export const RootNavigator = () => {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Info" component={InfoScreen} />
         <Stack.Screen name="Search" component={SearchScreen} />
+        <Stack.Screen name="ProductDetails" component={ProductDetailsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
