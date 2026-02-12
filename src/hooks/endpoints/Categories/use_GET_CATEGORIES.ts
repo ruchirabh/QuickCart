@@ -11,10 +11,11 @@ export const use_GET_CATEGORIES = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await apiClient.get(ENDPOINTS.GET_CATEGORIES);
       const data = response.data;
-      
+      console.log('GET CATEGORIES API RESPONSE::', response);
+
       // Add "All" category at the beginning
       setCategories(['all', ...data]);
     } catch (error: any) {

@@ -33,7 +33,7 @@ export const use_GET_PRODUCTS = () => {
       const url = ENDPOINTS.GET_PRODUCTS(LIMIT, skip);
 
       console.log(`Fetching page ${page}, skip: ${skip}`);
-      
+
       const response = await apiClient.get(url);
       const newProducts = response.data.products || [];
 
@@ -72,24 +72,24 @@ export const use_GET_PRODUCTS = () => {
     setHasMore(true);
     fetchedIds.current.clear();
     setError(null);
-    
+
     // Fetch first page
     try {
       setLoading(true);
       const url = ENDPOINTS.GET_PRODUCTS(LIMIT, 0);
       const response = await apiClient.get(url);
       const newProducts = response.data.products || [];
-      
+
       newProducts.forEach((product: Product) => {
         fetchedIds.current.add(product.id);
       });
-      
+
       setProducts(newProducts);
-      
+
       if (newProducts.length < LIMIT) {
         setHasMore(false);
       }
-      
+
       setPage(1);
     } catch (error: any) {
       console.error('REFRESH_ERROR', error.message);
@@ -103,12 +103,12 @@ export const use_GET_PRODUCTS = () => {
     fetchProducts();
   }, []);
 
-  return { 
-    products, 
-    loading, 
+  return {
+    products,
+    loading,
     error,
-    fetchProducts, 
+    fetchProducts,
     hasMore,
-    refresh 
+    refresh,
   };
 };

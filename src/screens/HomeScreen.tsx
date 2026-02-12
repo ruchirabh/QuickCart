@@ -22,8 +22,7 @@ import { use_GET_PRODUCTS } from '../hooks/endpoints/use_GET_PRODUCTS';
 import { use_GET_CATEGORIES } from '../hooks/endpoints/Categories/use_GET_CATEGORIES';
 import { use_GET_PRODUCTS_BY_CATEGORY } from '../hooks/endpoints/Categories/use_GET_PRODUCTS_BY_CATEGORY';
 import type { RootStackParamList } from '../navigation/types';
-
-const { width } = Dimensions.get('window');
+import { styles } from '../styles/HomeScreen.styles';
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -304,57 +303,3 @@ export const HomeScreen = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  columnWrapper: {
-    justifyContent: 'space-between',
-  },
-  row: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  cardWrapper: {
-    width: (width - 32) / 2,
-    marginBottom: 16,
-  },
-  footerContainer: {
-    paddingVertical: 20,
-    alignItems: 'center',
-  },
-  footer: {
-    marginVertical: 20,
-  },
-  endContainer: {
-    paddingVertical: 30,
-    alignItems: 'center',
-  },
-  endLine: {
-    width: 100,
-    height: 2,
-    borderRadius: 1,
-    marginBottom: 8,
-  },
-  endText: {
-    fontSize: 14,
-  },
-  refreshContainer: {
-    flex: 1,
-    paddingHorizontal: 8,
-  },
-  categoriesSkeleton: {
-    flexDirection: 'row',
-    marginBottom: 16,
-    paddingHorizontal: 8,
-  },
-  categorySkeleton: {
-    width: 80,
-    height: 36,
-    borderRadius: 20,
-    marginRight: 8,
-    opacity: 0.3,
-  },
-});

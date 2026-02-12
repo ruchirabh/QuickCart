@@ -56,10 +56,11 @@ export const use_GET_PRODUCT_DETAILS = (productId: number | null) => {
       setError(null);
 
       console.log(`Fetching product details for ID: ${productId}`);
-      
+
       const response = await apiClient.get(`/products/${productId}`);
+      console.log('GET PRODUCT DETAILS API RESPONSE::', response);
+
       setProduct(response.data);
-      
     } catch (error: any) {
       console.error('GET_PRODUCT_DETAILS_ERROR', error.message);
       setError(error.message);

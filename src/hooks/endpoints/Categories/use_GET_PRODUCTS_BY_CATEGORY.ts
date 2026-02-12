@@ -35,7 +35,7 @@ export const use_GET_PRODUCTS_BY_CATEGORY = (category: string | null) => {
       const url = ENDPOINTS.GET_PRODUCTS_BY_CATEGORY(category, LIMIT, skip);
 
       console.log(`Fetching category ${category}, page ${page}, skip: ${skip}`);
-      
+
       const response = await apiClient.get(url);
       const newProducts = response.data.products || [];
       setTotalProducts(response.data.total || 0);
