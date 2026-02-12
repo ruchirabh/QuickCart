@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { StatusBar } from 'react-native';
+import FlashMessage from 'react-native-flash-message';
 
 import { store, persistor } from './src/store';
 import { LoadingProvider } from './src/contexts/LoadingContext';
@@ -22,6 +23,7 @@ function AppContent() {
       <LoadingManager minDisplayTime={2000} showOnAppLaunch={true}>
         <RootNavigator />
       </LoadingManager>
+      <FlashMessage position="top" />
     </>
   );
 }
@@ -31,11 +33,9 @@ function App() {
 
   useEffect(() => {
     const initialize = async () => {
-      // Simulate initial setup
       await new Promise<void>(resolve => {
         setTimeout(() => resolve(), 500);
       });
-
       setIsReduxReady(true);
     };
 
