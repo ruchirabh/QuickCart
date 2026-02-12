@@ -5,6 +5,7 @@ import { useAppTheme } from '../../contexts/ThemeContext';
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks';
 import { addToCart, removeFromCart } from '../../features/cartSlice';
 import { use_GET_PRODUCT_DETAILS } from '../../hooks/endpoints/Product/use_GET_PRODUCT_DETAILS';
+import { createStyles } from '../../styles/ProductDetailsScreen/ProductDetailsScreen.styles';
 
 // Import components
 import ProductImageGallery from '../../components/ProductDetails/ProductImageGallery';
@@ -137,19 +138,5 @@ const ProductDetailsScreen = () => {
     </View>
   );
 };
-
-const createStyles = (theme: any, isDark: boolean) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: theme.colors.background,
-    },
-    productInfo: {
-      padding: 20,
-    },
-    loadingContainer: {
-      flex: 1,
-    },
-  });
 
 export default ProductDetailsScreen;

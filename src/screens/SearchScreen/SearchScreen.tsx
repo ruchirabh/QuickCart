@@ -19,8 +19,7 @@ import ProductCard from '../../components/HomeScreen/Card/ProductCard';
 import { use_GET_SEARCH_PRODUCTS } from '../../hooks/endpoints/Search/use_GET_SEARCH_PRODUCTS';
 import { use_GET_SEARCH_SUGGESTIONS } from '../../hooks/endpoints/Search/use_GET_SEARCH_SUGGESTIONS';
 import { ProductCardShimmer } from '../../components/Loading/ShimmerSkeleton';
-
-const { width } = Dimensions.get('window');
+import { createStyles } from '../../styles/SearchScreen/SearchScreen.styles';
 
 const SearchScreen = () => {
   const navigation = useNavigation();
@@ -62,7 +61,7 @@ const SearchScreen = () => {
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
-    
+
     Keyboard.dismiss();
     setShowSuggestions(false);
     await searchProducts(searchQuery);
@@ -90,7 +89,7 @@ const SearchScreen = () => {
 
   const keyExtractor = useCallback(
     (item: any, index: number) => `search-${item.id}-${index}`,
-    []
+    [],
   );
 
   const renderSuggestionItem = ({ item }: { item: string }) => (
@@ -99,10 +98,10 @@ const SearchScreen = () => {
       onPress={() => handleSuggestionPress(item)}
       activeOpacity={0.7}
     >
-      <Icon 
-        name="search-outline" 
-        size={20} 
-        color={theme.colors.textSecondary} 
+      <Icon
+        name="search-outline"
+        size={20}
+        color={theme.colors.textSecondary}
       />
       <Text style={[styles.suggestionText, { color: theme.colors.text }]}>
         {item}
@@ -113,8 +112,17 @@ const SearchScreen = () => {
   const renderRecentHeader = () => (
     <View style={styles.suggestionsHeader}>
       <View style={styles.suggestionsTitleContainer}>
-        <Icon name="time-outline" size={18} color={theme.colors.textSecondary} />
-        <Text style={[styles.suggestionsTitle, { color: theme.colors.textSecondary }]}>
+        <Icon
+          name="time-outline"
+          size={18}
+          color={theme.colors.textSecondary}
+        />
+        <Text
+          style={[
+            styles.suggestionsTitle,
+            { color: theme.colors.textSecondary },
+          ]}
+        >
           Recent Searches
         </Text>
       </View>
@@ -130,7 +138,12 @@ const SearchScreen = () => {
     <View style={styles.suggestionsHeader}>
       <View style={styles.suggestionsTitleContainer}>
         <Icon name="trending-up" size={18} color={theme.colors.textSecondary} />
-        <Text style={[styles.suggestionsTitle, { color: theme.colors.textSecondary }]}>
+        <Text
+          style={[
+            styles.suggestionsTitle,
+            { color: theme.colors.textSecondary },
+          ]}
+        >
           Popular Searches
         </Text>
       </View>
@@ -139,14 +152,21 @@ const SearchScreen = () => {
 
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
-      <View style={[styles.iconCircle, { backgroundColor: theme.colors.border + '40' }]}>
+      <View
+        style={[
+          styles.iconCircle,
+          { backgroundColor: theme.colors.border + '40' },
+        ]}
+      >
         <Icon name="search" size={48} color={theme.colors.textSecondary} />
       </View>
       <Text style={[styles.emptyTitle, { color: theme.colors.text }]}>
         {searchQuery.trim() ? 'No results found' : 'Search products'}
       </Text>
-      <Text style={[styles.emptySubtitle, { color: theme.colors.textSecondary }]}>
-        {searchQuery.trim() 
+      <Text
+        style={[styles.emptySubtitle, { color: theme.colors.textSecondary }]}
+      >
+        {searchQuery.trim()
           ? `No products match "${searchQuery}"`
           : 'Find your favorite products'}
       </Text>
@@ -164,7 +184,9 @@ const SearchScreen = () => {
     if (!hasMore && searchResults.length > 0) {
       return (
         <View style={styles.endContainer}>
-          <View style={[styles.endLine, { backgroundColor: theme.colors.border }]} />
+          <View
+            style={[styles.endLine, { backgroundColor: theme.colors.border }]}
+          />
           <Text style={[styles.endText, { color: theme.colors.textSecondary }]}>
             No more results
           </Text>
@@ -196,13 +218,11 @@ const SearchScreen = () => {
       keyExtractor={(item, index) => `suggestion-${item}-${index}`}
       contentContainerStyle={styles.suggestionsContent}
       ListHeaderComponent={
-        suggestions.length > 0 ? (
-          searchQuery.trim() ? (
-            renderPopularHeader()
-          ) : (
-            renderRecentHeader()
-          )
-        ) : null
+        suggestions.length > 0
+          ? searchQuery.trim()
+            ? renderPopularHeader()
+            : renderRecentHeader()
+          : null
       }
       renderItem={renderSuggestionItem}
       ListFooterComponent={
@@ -246,7 +266,11 @@ const SearchScreen = () => {
           />
           {searchQuery.length > 0 && (
             <TouchableOpacity onPress={handleClearSearch}>
-              <Icon name="close-circle" size={20} color={theme.colors.textSecondary} />
+              <Icon
+                name="close-circle"
+                size={20}
+                color={theme.colors.textSecondary}
+              />
             </TouchableOpacity>
           )}
         </View>
@@ -268,193 +292,19 @@ const SearchScreen = () => {
         <>
           {/* Search Results */}
           {!showSuggestions && searchResults.length > 0 && renderResults()}
-          
+
           {/* Suggestions */}
           {showSuggestions && renderSuggestions()}
-          
+
           {/* Empty State */}
-          {!showSuggestions && searchResults.length === 0 && !loading && renderEmptyState()}
+          {!showSuggestions &&
+            searchResults.length === 0 &&
+            !loading &&
+            renderEmptyState()}
         </>
       )}
     </View>
   );
 };
-
-const createStyles = (theme: any, isDark: boolean) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: theme.colors.background,
-    },
-
-    /* Header */
-    header: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingTop: Platform.OS === 'android' 
-        ? (StatusBar.currentHeight || 0) + 8 
-        : 12,
-      paddingBottom: 12,
-      paddingHorizontal: 16,
-      backgroundColor: theme.colors.card,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.border,
-    },
-
-    backButton: {
-      padding: 8,
-      marginRight: 8,
-    },
-
-    searchContainer: {
-      flex: 1,
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: isDark ? '#2A2A2A' : '#F5F5F5',
-      borderRadius: 12,
-      paddingHorizontal: 12,
-      paddingVertical: Platform.OS === 'ios' ? 12 : 8,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-    },
-
-    searchInput: {
-      flex: 1,
-      marginLeft: 8,
-      marginRight: 8,
-      fontSize: 16,
-      padding: 0,
-    },
-
-    /* Loading */
-    loadingContainer: {
-      flex: 1,
-      paddingTop: 16,
-      paddingHorizontal: 8,
-    },
-
-    row: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      justifyContent: 'space-between',
-    },
-
-    cardWrapper: {
-      width: (width - 32) / 2,
-      marginBottom: 16,
-    },
-
-    /* Suggestions */
-    suggestionsContent: {
-      paddingTop: 16,
-      paddingBottom: 16,
-    },
-
-    suggestionsHeader: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      paddingHorizontal: 20,
-      paddingVertical: 12,
-    },
-
-    suggestionsTitleContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-
-    suggestionsTitle: {
-      fontSize: 14,
-      fontWeight: '600',
-      marginLeft: 8,
-    },
-
-    clearText: {
-      fontSize: 14,
-      fontWeight: '600',
-    },
-
-    suggestionItem: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingHorizontal: 20,
-      paddingVertical: 12,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.border + '40',
-    },
-
-    suggestionText: {
-      fontSize: 16,
-      marginLeft: 12,
-      flex: 1,
-    },
-
-    suggestionsLoading: {
-      paddingVertical: 20,
-      alignItems: 'center',
-    },
-
-    /* Results */
-    resultsContent: {
-      paddingHorizontal: 8,
-      paddingBottom: 16,
-    },
-
-    columnWrapper: {
-      justifyContent: 'space-between',
-    },
-
-    footerContainer: {
-      paddingVertical: 20,
-      alignItems: 'center',
-    },
-
-    endContainer: {
-      paddingVertical: 30,
-      alignItems: 'center',
-    },
-
-    endLine: {
-      width: 100,
-      height: 2,
-      borderRadius: 1,
-      marginBottom: 8,
-    },
-
-    endText: {
-      fontSize: 14,
-    },
-
-    /* Empty State */
-    emptyContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      paddingHorizontal: 40,
-      marginTop: -40,
-    },
-
-    iconCircle: {
-      width: 100,
-      height: 100,
-      borderRadius: 50,
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginBottom: 20,
-    },
-
-    emptyTitle: {
-      fontSize: 20,
-      fontWeight: '700',
-      marginBottom: 8,
-      textAlign: 'center',
-    },
-
-    emptySubtitle: {
-      fontSize: 14,
-      textAlign: 'center',
-      lineHeight: 20,
-    },
-  });
 
 export default SearchScreen;
