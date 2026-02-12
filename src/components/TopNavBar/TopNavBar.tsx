@@ -141,7 +141,7 @@ const TopNavBar: React.FC<TopNavBarProps> = ({
                 <Icon
                   name="cart-outline"
                   size={24}
-                  color={theme.colors.primary}
+                  color={theme.colors.text}
                 />
                 {cartItemCount > 0 && (
                   <View style={styles.badge}>

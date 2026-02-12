@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { apiClient } from '../../services/apiClient';
-import { ENDPOINTS } from '../../endpoints/endpoints';
+import { apiClient } from '../../../services/apiClient';
+import { ENDPOINTS } from '../../../endpoints/endpoints';
 
 interface Product {
   id: number;

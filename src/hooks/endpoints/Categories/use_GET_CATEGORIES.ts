@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { apiClient } from '../../services/apiClient';
-import { ENDPOINTS } from '../../endpoints/endpoints';
+import { apiClient } from '../../../services/apiClient';
+import { ENDPOINTS } from '../../../endpoints/endpoints';
 
 export const use_GET_CATEGORIES = () => {
   const [categories, setCategories] = useState<string[]>([]);

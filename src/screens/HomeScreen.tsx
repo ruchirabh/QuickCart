@@ -18,8 +18,8 @@ import ProductCard from '../components/HomeScreen/Card/ProductCard';
 import CategoriesHorizontal from '../components/HomeScreen/Categories/CategoriesHorizontal';
 import { ProductCardShimmer } from '../components/Loading/ShimmerSkeleton';
 import { use_GET_PRODUCTS } from '../hooks/endpoints/use_GET_PRODUCTS';
-import { use_GET_CATEGORIES } from '../hooks/endpoints/use_GET_CATEGORIES';
-import { use_GET_PRODUCTS_BY_CATEGORY } from '../hooks/endpoints/use_GET_PRODUCTS_BY_CATEGORY';
+import { use_GET_CATEGORIES } from '../hooks/endpoints/Categories/use_GET_CATEGORIES';
+import { use_GET_PRODUCTS_BY_CATEGORY } from '../hooks/endpoints/Categories/use_GET_PRODUCTS_BY_CATEGORY';
 
 const { width } = Dimensions.get('window');
 
