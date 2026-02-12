@@ -15,7 +15,7 @@ import Button from '../../common/Button';
 import RatingStars from './RatingStars';
 
 const { width } = Dimensions.get('window');
-const CARD_WIDTH = width / 2 - 20;
+const CARD_WIDTH = width / 2 - 12;
 
 interface Props {
   product: any;
@@ -147,90 +147,105 @@ const createStyles = (theme: any, isDark: boolean) =>
     card: {
       width: CARD_WIDTH,
       backgroundColor: theme.colors.card,
-      borderRadius: 16,
-      marginBottom: 16,
+      borderRadius: 14,
+      marginBottom: 10, // reduced
       borderWidth: 1,
       borderColor: theme.colors.border,
       overflow: 'hidden',
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: isDark ? 0.3 : 0.1,
-      shadowRadius: 8,
-      elevation: 5,
+      shadowOpacity: isDark ? 0.25 : 0.08,
+      shadowRadius: 6,
+      elevation: 4,
     },
+
     imageContainer: {
       position: 'relative',
     },
+
     image: {
       width: '100%',
-      height: 180,
+      height: 170, // slightly reduced to balance bigger width
       resizeMode: 'cover',
     },
+
     discountBadge: {
       position: 'absolute',
-      top: 10,
-      left: 10,
+      top: 8,
+      left: 8,
       backgroundColor: '#FF3B30',
-      paddingHorizontal: 8,
-      paddingVertical: 4,
-      borderRadius: 12,
+      paddingHorizontal: 6, // reduced
+      paddingVertical: 3,
+      borderRadius: 10,
       zIndex: 1,
     },
+
     discountText: {
       color: '#FFF',
-      fontSize: 11,
+      fontSize: 10,
       fontWeight: '700',
     },
+
     content: {
-      padding: 12,
+      padding: 10, // reduced from 12
     },
+
     title: {
       fontSize: 14,
       fontWeight: '600',
       color: theme.colors.text,
-      marginBottom: 6,
-      lineHeight: 20,
+      marginBottom: 4, // reduced
+      lineHeight: 18,
     },
+
     ratingContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: 8,
+      marginBottom: 6, // reduced
     },
+
     ratingCount: {
       fontSize: 11,
       color: theme.colors.textSecondary,
       marginLeft: 4,
     },
+
     priceContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: 12,
+      marginBottom: 8, // reduced
     },
+
     price: {
-      fontSize: 18,
+      fontSize: 17, // slightly tighter
       fontWeight: '700',
       color: theme.colors.primary,
     },
+
     originalPrice: {
-      fontSize: 13,
+      fontSize: 12,
       color: theme.colors.textSecondary,
       textDecorationLine: 'line-through',
-      marginLeft: 8,
+      marginLeft: 6,
     },
+
     buttonContainer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
     },
+
     detailsButton: {
       flex: 1,
-      marginRight: 8,
+      marginRight: 6, // reduced
     },
+
     cartButton: {
       flex: 1,
     },
+
     buttonText: {
-      fontSize: 12,
+      fontSize: 11, // slightly smaller for compact look
     },
   });
 
