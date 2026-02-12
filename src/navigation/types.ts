@@ -4,6 +4,7 @@ export type RootStackParamList = {
   Search: undefined;
   Cart: undefined;
   Profile: undefined;
+  Info:undefined;
   // Add more screen params as needed
 };
 
@@ -12,4 +13,5 @@ export type BottomTabParamList = {
   SearchTab: undefined;
   CartTab: undefined;
   ProfileTab: undefined;
+
 };

@@ -119,7 +119,7 @@ export const HomeScreen = () => {
   };
 
   const handleInfoPress = () => {
-    console.log('Info pressed');
+    navigation.navigate('Info' as never)
   };
 
   const handleSelectCategory = async (category: string | null) => {
