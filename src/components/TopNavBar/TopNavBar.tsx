@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Animated,
   StatusBar,
+  Platform,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useAppTheme } from '../../contexts/ThemeContext';
@@ -30,46 +31,37 @@ const TopNavBar: React.FC<TopNavBarProps> = ({
   scrollY,
 }) => {
   const { theme, isDark } = useAppTheme();
-  
+
   // Animation values
   const translateY = useRef(new Animated.Value(0)).current;
-  const opacity = useRef(new Animated.Value(1)).current;
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
     if (animated && scrollY) {
-      // Hide navbar when scrolling down, show when scrolling up
       const listener = scrollY.addListener(({ value }) => {
-        const scrollDiff = value - (scrollY as any)._lastValue;
-        
-        if (scrollDiff > 5 && value > 50) {
-          // Scrolling down - hide navbar
-          Animated.parallel([
-            Animated.timing(translateY, {
-              toValue: -100,
-              duration: 200,
-              useNativeDriver: true,
-            }),
-            Animated.timing(opacity, {
-              toValue: 0,
-              duration: 150,
-              useNativeDriver: true,
-            }),
-          ]).start();
-        } else if (scrollDiff < -5) {
-          // Scrolling up - show navbar
-          Animated.parallel([
-            Animated.timing(translateY, {
-              toValue: 0,
-              duration: 200,
-              useNativeDriver: true,
-            }),
-            Animated.timing(opacity, {
-              toValue: 1,
-              duration: 150,
-              useNativeDriver: true,
-            }),
-          ]).start();
+        // Don't animate if scroll value is negative (overscroll)
+        if (value < 0) return;
+
+        const diff = value - lastScrollY.current;
+
+        // Scrolling down - hide navbar
+        if (diff > 5 && value > 50) {
+          Animated.timing(translateY, {
+            toValue: -100,
+            duration: 250,
+            useNativeDriver: true,
+          }).start();
         }
+        // Scrolling up - show navbar
+        else if (diff < -5) {
+          Animated.timing(translateY, {
+            toValue: 0,
+            duration: 250,
+            useNativeDriver: true,
+          }).start();
+        }
+
+        lastScrollY.current = value;
       });
 
       return () => {
@@ -80,56 +72,47 @@ const TopNavBar: React.FC<TopNavBarProps> = ({
 
   const styles = createStyles(theme, isDark);
 
-  const NavContent = () => (
-    <View style={styles.container}>
-      <View style={styles.leftSection}>
-        <Text style={styles.title}>{title}</Text>
-      </View>
-      
-      <View style={styles.rightSection}>
-        {showSearch && (
-          <TouchableOpacity
-            style={styles.iconButton}
-            onPress={onSearchPress}
-            activeOpacity={0.7}
-          >
-            <Icon name="search-outline" size={24} color={theme.colors.text} />
-          </TouchableOpacity>
-        )}
-        
-        {showInfo && (
-          <TouchableOpacity
-            style={styles.iconButton}
-            onPress={onInfoPress}
-            activeOpacity={0.7}
-          >
-            <Icon name="information-circle-outline" size={24} color={theme.colors.text} />
-          </TouchableOpacity>
-        )}
-      </View>
-    </View>
-  );
-
-  if (animated) {
-    return (
-      <Animated.View
-        style={[
-          styles.wrapper,
-          {
-            transform: [{ translateY }],
-            opacity,
-          },
-        ]}
-      >
-        <NavContent />
-      </Animated.View>
-    );
-  }
-
   return (
-    <View style={styles.wrapper}>
-      <NavContent />
-    </View>
+    <Animated.View
+      style={[
+        styles.wrapper,
+        animated && {
+          transform: [{ translateY }],
+        },
+      ]}
+    >
+      <View style={styles.container}>
+        <View style={styles.leftSection}>
+          <Text style={styles.title}>{title}</Text>
+        </View>
+
+        <View style={styles.rightSection}>
+          {showSearch && (
+            <TouchableOpacity
+              style={styles.iconButton}
+              onPress={onSearchPress}
+              activeOpacity={0.7}
+            >
+              <Icon name="search-outline" size={24} color={theme.colors.text} />
+            </TouchableOpacity>
+          )}
+
+          {showInfo && (
+            <TouchableOpacity
+              style={styles.iconButton}
+              onPress={onInfoPress}
+              activeOpacity={0.7}
+            >
+              <Icon
+                name="information-circle-outline"
+                size={24}
+                color={theme.colors.text}
+              />
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
+    </Animated.View>
   );
 };
 
@@ -141,18 +124,17 @@ const createStyles = (theme: any, isDark: boolean) =>
       left: 0,
       right: 0,
       zIndex: 1000,
-      backgroundColor: isDark ? 'rgba(10, 10, 10, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+      backgroundColor: theme.colors.card,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.border,
-      paddingTop: StatusBar.currentHeight || 0,
+      paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
     },
     container: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
       paddingHorizontal: 16,
-      paddingVertical: 12,
-      height: 56,
+      height: Platform.OS === 'ios' ? 56 : 64,
     },
     leftSection: {
       flex: 1,

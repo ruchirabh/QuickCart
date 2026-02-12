@@ -1,12 +1,13 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { Appearance, ColorSchemeName } from 'react-native';
 import { MyLightTheme, MyDarkTheme } from '../theme/navigationTheme';
-import type { Theme } from '@react-navigation/native';
+import type { AppTheme } from '../theme/types';
 
 interface ThemeContextType {
-  theme: Theme;
+  theme: AppTheme;
   colorScheme: ColorSchemeName;
   isDark: boolean;
+  toggleTheme: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -24,12 +25,12 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [colorScheme, setColorScheme] = useState<ColorSchemeName>(
-    Appearance.getColorScheme() ?? 'light',
-  );
+  const systemScheme = Appearance.getColorScheme() ?? 'light';
+
+  const [colorScheme, setColorScheme] =
+    useState<ColorSchemeName>(systemScheme);
 
   useEffect(() => {
-    // Listen for system theme changes
     const subscription = Appearance.addChangeListener(({ colorScheme }) => {
       setColorScheme(colorScheme ?? 'light');
     });
@@ -40,12 +41,17 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const isDark = colorScheme === 'dark';
   const theme = isDark ? MyDarkTheme : MyLightTheme;
 
+  const toggleTheme = () => {
+    setColorScheme(isDark ? 'light' : 'dark');
+  };
+
   return (
     <ThemeContext.Provider
       value={{
         theme,
         colorScheme,
         isDark,
+        toggleTheme,
       }}
     >
       {children}

@@ -3,10 +3,9 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
-  ScrollView,
   Animated,
-  Dimensions,
+  Platform,
+  StatusBar,
 } from 'react-native';
 import { useAppTheme } from '../contexts/ThemeContext';
 import TopNavBar from '../components/TopNavBar/TopNavBar';
@@ -17,16 +16,23 @@ export const HomeScreen = () => {
 
   const handleSearchPress = () => {
     console.log('Search pressed');
-    // Navigate to search screen
   };
 
   const handleInfoPress = () => {
     console.log('Info pressed');
-    // Show info modal or navigate
   };
 
+  // Calculate navbar height based on platform
+  const navbarHeight = Platform.OS === 'ios' ? 56 : 64;
+  const statusBarHeight =
+    Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0;
+  const totalNavbarHeight = navbarHeight + statusBarHeight;
+
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
+      {/* Navbar - absolutely positioned */}
       <TopNavBar
         title="QuickCart"
         onSearchPress={handleSearchPress}
@@ -34,18 +40,21 @@ export const HomeScreen = () => {
         animated={true}
         scrollY={scrollY}
       />
-      
+
+      {/* Scrollable Content - with padding top to account for navbar */}
       <Animated.ScrollView
         style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingTop: totalNavbarHeight + 16 }, // Add padding to push content below navbar
+        ]}
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={16}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: true }
+          { useNativeDriver: true },
         )}
       >
-        {/* Placeholder content for scrolling */}
         {[...Array(20)].map((_, index) => (
           <View
             key={index}
@@ -60,13 +69,13 @@ export const HomeScreen = () => {
             <Text style={[styles.cardTitle, { color: theme.colors.text }]}>
               Item {index + 1}
             </Text>
-            <Text style={[styles.cardSubtitle, { color: '#1010' }]}>
+            <Text style={[styles.cardSubtitle, { color: theme.colors.text }]}>
               Scroll to see navbar hide/show
             </Text>
           </View>
         ))}
       </Animated.ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -76,11 +85,10 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-    marginTop: 56, // Height of navbar + status bar
   },
   scrollContent: {
-    padding: 16,
-    paddingTop: 8,
+    paddingHorizontal: 16,
+    paddingBottom: 16,
   },
   card: {
     padding: 16,
@@ -89,7 +97,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.08,
     shadowRadius: 4,
     elevation: 3,
   },
@@ -100,5 +108,6 @@ const styles = StyleSheet.create({
   },
   cardSubtitle: {
     fontSize: 14,
+    opacity: 0.7,
   },
 });
