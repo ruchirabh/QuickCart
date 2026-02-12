@@ -13,10 +13,17 @@ import { useAppDispatch, useAppSelector } from '../../../hooks/reduxHooks';
 import { addToCart, removeFromCart } from '../../../features/cartSlice';
 import Button from '../../common/Button';
 import RatingStars from './RatingStars';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../../navigation/types';
+import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width / 2 - 20;
 
+type HomeScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'Home'
+>;
 interface Props {
   product: any;
   onViewDetails?: () => void;
@@ -25,6 +32,7 @@ interface Props {
 const ProductCard: React.FC<Props> = ({ product, onViewDetails }) => {
   const { theme, isDark } = useAppTheme();
   const dispatch = useAppDispatch();
+  const navigation = useNavigation<HomeScreenNavigationProp>();
 
   // Check if product is in cart
   const isInCart = useAppSelector(state =>
@@ -101,7 +109,7 @@ const ProductCard: React.FC<Props> = ({ product, onViewDetails }) => {
             title="Details"
             variant="outline"
             size="small"
-            onPress={onViewDetails || (() => console.log('View details'))}
+            onPress={()=>navigation.navigate('ProductDetails', { productId: product.id })}
             style={styles.detailsButton}
             textStyle={styles.buttonText}
           />
