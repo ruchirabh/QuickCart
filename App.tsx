@@ -3,7 +3,6 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { StatusBar } from 'react-native';
 import FlashMessage from 'react-native-flash-message';
-
 import { store, persistor } from './src/store';
 import { LoadingProvider } from './src/contexts/LoadingContext';
 import { ThemeProvider, useAppTheme } from './src/contexts/ThemeContext';
@@ -23,7 +22,21 @@ function AppContent() {
       <LoadingManager minDisplayTime={2000} showOnAppLaunch={true}>
         <RootNavigator />
       </LoadingManager>
-      <FlashMessage position="top" />
+      <FlashMessage
+        position="top"
+        floating={true}
+        statusBarHeight={StatusBar.currentHeight || 40} // Adjust this value
+        style={{
+          marginTop: 10, // Additional margin
+        }}
+        titleStyle={{
+          fontSize: 14,
+          fontWeight: '600',
+        }}
+        textStyle={{
+          fontSize: 12,
+        }}
+      />
     </>
   );
 }

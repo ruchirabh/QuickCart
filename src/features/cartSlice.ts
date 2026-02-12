@@ -11,7 +11,7 @@ interface CartItem {
 
 interface CartState {
   items: CartItem[];
-  addedToCartIds: number[]; // Track which products have been added to cart
+  addedToCartIds: number[]; 
 }
 
 const initialState: CartState = {

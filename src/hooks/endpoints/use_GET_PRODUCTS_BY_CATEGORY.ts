@@ -12,35 +12,37 @@ interface Product {
   discountPercentage?: number;
 }
 
-export const use_GET_PRODUCTS = () => {
+export const use_GET_PRODUCTS_BY_CATEGORY = (category: string | null) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [totalProducts, setTotalProducts] = useState(0);
 
   const LIMIT = 10;
   const fetchedIds = useRef(new Set<number>());
 
   const fetchProducts = useCallback(async () => {
     if (loading || !hasMore) return;
+    if (!category || category === 'all') return;
 
     try {
       setLoading(true);
       setError(null);
 
       const skip = page * LIMIT;
-      const url = ENDPOINTS.GET_PRODUCTS(LIMIT, skip);
+      const url = ENDPOINTS.GET_PRODUCTS_BY_CATEGORY(category, LIMIT, skip);
 
-      console.log(`Fetching page ${page}, skip: ${skip}`);
+      console.log(`Fetching category ${category}, page ${page}, skip: ${skip}`);
       
       const response = await apiClient.get(url);
       const newProducts = response.data.products || [];
+      setTotalProducts(response.data.total || 0);
 
-      // Filter out duplicates using the Set
+      // Filter out duplicates
       const uniqueNewProducts = newProducts.filter((product: Product) => {
         if (fetchedIds.current.has(product.id)) {
-          console.log(`Skipping duplicate product ID: ${product.id}`);
           return false;
         }
         fetchedIds.current.add(product.id);
@@ -51,64 +53,41 @@ export const use_GET_PRODUCTS = () => {
         setProducts(prev => [...prev, ...uniqueNewProducts]);
       }
 
-      // Check if we've reached the end
       if (newProducts.length < LIMIT) {
         setHasMore(false);
       }
 
       setPage(prev => prev + 1);
     } catch (error: any) {
-      console.error('GET_PRODUCTS_ERROR', error.message);
+      console.error('GET_PRODUCTS_BY_CATEGORY_ERROR', error.message);
       setError(error.message);
     } finally {
       setLoading(false);
     }
-  }, [page, loading, hasMore]);
+  }, [category, page, loading, hasMore]);
 
-  // Refresh function - clear all data and fetch from beginning
-  const refresh = useCallback(async () => {
+  const resetCategory = useCallback(() => {
     setProducts([]);
     setPage(0);
     setHasMore(true);
     fetchedIds.current.clear();
     setError(null);
-    
-    // Fetch first page
-    try {
-      setLoading(true);
-      const url = ENDPOINTS.GET_PRODUCTS(LIMIT, 0);
-      const response = await apiClient.get(url);
-      const newProducts = response.data.products || [];
-      
-      newProducts.forEach((product: Product) => {
-        fetchedIds.current.add(product.id);
-      });
-      
-      setProducts(newProducts);
-      
-      if (newProducts.length < LIMIT) {
-        setHasMore(false);
-      }
-      
-      setPage(1);
-    } catch (error: any) {
-      console.error('REFRESH_ERROR', error.message);
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
   }, []);
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    resetCategory();
+    if (category && category !== 'all') {
+      fetchProducts();
+    }
+  }, [category]);
 
-  return { 
-    products, 
-    loading, 
+  return {
+    products,
+    loading,
     error,
-    fetchProducts, 
     hasMore,
-    refresh 
+    totalProducts,
+    fetchProducts,
+    resetCategory,
   };
 };

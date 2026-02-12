@@ -8,6 +8,7 @@ import {
   TextStyle,
 } from 'react-native';
 import { useAppTheme } from '../../contexts/ThemeContext';
+import { StyleProp } from 'react-native';
 
 interface ButtonProps {
   title: string;
@@ -17,8 +18,9 @@ interface ButtonProps {
   disabled?: boolean;
   loading?: boolean;
   icon?: React.ReactNode;
-  style?: ViewStyle;
-  textStyle?: TextStyle;
+  style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
+
   color?: string;
 }
 
