@@ -1,286 +1,261 @@
+
 📱 QuickCart – React Native Product App
-
-app Link : https://drive.google.com/file/d/1koChGfGp_B21z5D68HmM3sq-MyOfeuhr/view?usp=drive_link
-
 A production-style React Native mobile application built using React Native CLI + TypeScript that demonstrates scalable architecture, API data handling, Redux state management, search, pagination, persistence, and lifecycle awareness.
 
-This project was built as part of a React Native Fresher Technical Evaluation Task focusing on code quality, performance, and real-world app structure rather than UI styling.
+<div align="center"> <img src="https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" /> <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" /> <img src="https://img.shields.io/badge/Redux_Toolkit-764ABC?style=for-the-badge&logo=redux&logoColor=white" /> <img src="https://img.shields.io/badge/React_Navigation-6B52AE?style=for-the-badge&logo=react&logoColor=white" /> <img src="https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white" /> <img src="https://img.shields.io/badge/AsyncStorage-FF9900?style=for-the-badge&logo=storage&logoColor=white" /> </div>
+📋 Project Overview
+This project was built as part of a React Native Fresher Technical Evaluation Task focusing on code quality, performance, and real-world app structure rather than UI styling. The app demonstrates industry-standard patterns and practices for building scalable React Native applications.
 
-🚀 Features Implemented
-✅ Core Requirements Covered
+🔗 App Demo: Google Drive Link
 
-✅ React Native CLI (not Expo)
-
-✅ TypeScript
-
-✅ Functional components + React Hooks
-
-✅ Redux Toolkit for state management
-
-✅ Multiple screens with proper navigation
-
-✅ Large dataset loaded from public API
-
-✅ Search functionality
-
-✅ Category filtering
-
-✅ Infinite scroll pagination
-
-✅ Local data persistence (restored after restart)
-
-✅ App lifecycle handling
-
-✅ Loading + error handling states
-
-✅ No third-party UI libraries (only core RN components)
-
-🌐 Public API Used
-
+✨ Features Implemented
+✅ Core Requirements
+Feature	Implementation
+⚛️ React Native CLI	Native development environment (not Expo)
+📘 TypeScript	Full type safety throughout the application
+🎣 React Hooks	Functional components with useState, useEffect, useCallback, useMemo
+🗃️ Redux Toolkit	Global state management with typed hooks
+🧭 Navigation	Multiple screens with native stack navigator
+📊 Large Dataset	Products API with 100+ items
+🔍 Search	Live search with debouncing and suggestions
+🏷️ Category Filtering	Horizontal scrollable categories with chip selection
+♾️ Infinite Scroll	Pagination with FlatList onEndReached
+💾 Data Persistence	AsyncStorage for recent searches and cart state
+🔄 Lifecycle Handling	App state awareness and data restoration
+⏳ Loading States	Skeleton loaders and activity indicators
+⚠️ Error Handling	API errors, empty states, retry mechanisms
+🎨 Pure RN Components	No third-party UI libraries
+🌐 Public API
 Data is powered by DummyJSON public APIs:
 
+text
 https://dummyjson.com/products
+APIs Used:
+javascript
+// Get all products with pagination
+GET /products?limit={limit}&skip={skip}
 
+// Search products
+GET /products/search?q={query}
 
-APIs used:
+// Get products by category
+GET /products/category/{category}
 
-Products list API
-
-Search API
-
-Category products API
-
-Product details API
-
-Examples:
-
-/products
-/products/search?q=phone
-/products/category/smartphones
-/products/{id}
-
-🧭 Screens
-
-🏠 Home Screen — Product list with infinite scroll + categories
-
-🔍 Search Screen — Search + suggestions + filtered results
-
-📦 Product Details Screen — Detailed product view
-
-🛒 Cart Screen — Redux-based cart state
-
-ℹ️ Info Screen — App + API information
-
+// Get single product details
+GET /products/{id}
+🧭 Screens & Navigation
+Screen	Description
+🏠 Home	Product grid with infinite scroll, category filters, and animated top navbar
+🔍 Search	Live search with suggestions, recent searches, and paginated results
+📦 Product Details	Full product information, image gallery, specs, reviews, and cart actions
+🛒 Cart	Redux-powered cart with quantity controls, price calculation, and order confirmation
+ℹ️ Info	App information, tech stack, and API details
 🧠 State Management
+Redux Toolkit is used with a clean, typed architecture:
 
-Redux Toolkit is used for:
+typescript
+// Custom typed hooks
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import type { RootState, AppDispatch } from '../store';
 
-Cart state
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+Redux Slices:
+🛒 Cart Slice - Add/remove items, update quantities, clear cart
 
-Product selection
-
-Global app state slices
-
-Predictable updates
-
-Avoiding prop drilling
-
-Custom typed Redux hooks are implemented:
-
-useAppDispatch
-useAppSelector
+🔢 Counter Slice - Demo slice for Redux Toolkit setup
 
 💾 Data Persistence
+AsyncStorage is implemented for:
 
-Local storage is implemented using:
+✅ Recent search history (last 5 searches)
 
-AsyncStorage
+✅ Cart state persistence across app restarts
 
+✅ Cached behavior support
 
-Used for:
+Data is automatically restored when:
 
-Recent searches
+App reopens from killed state
 
-Cached behavior support
+App comes back from background
 
-State restoration after app restart
-
-This ensures data is restored when:
-
-App reopens
-
-App comes from background
-
-App was killed and relaunched
+Device is restarted
 
 🔎 Search System
+A robust search implementation with:
 
-Includes:
-
-Live search API integration
-
-Search suggestions
-
-Recent search history
-
-Suggestion caching
-
-Debounced request pattern
-
-AbortController cancellation support
-
+Feature	Implementation
+🎯 Live Search	Real-time results as you type
+💡 Search Suggestions	Popular and recent searches
+📜 Recent History	Persistent storage of last 5 searches
+⏱️ Debouncing	300ms delay to prevent excessive API calls
+🛑 Request Cancellation	AbortController cancels pending requests
+♾️ Pagination	Load more search results
+🔄 State Management	Redux for cart, local state for search
 📜 Pagination / Infinite Scroll
+Implemented using limit + skip query parameters:
 
-Implemented using:
+javascript
+// Pagination logic
+const LIMIT = 10;
+const skip = page * LIMIT;
+const url = `/products?limit=${LIMIT}&skip=${skip}`;
+Features:
 
-limit + skip query params
+✅ FlatList onEndReached implementation
 
+✅ Duplicate request prevention
 
-Handled via:
+✅ hasMore flag tracking
 
-FlatList onEndReached
+✅ Page counter management
 
-Loading guards
+✅ Loading guards
 
-hasMore flags
+✅ Skeleton loaders for next page
 
-Page tracking
+⚡ Performance Optimizations
+Optimization	Implementation
+🖼️ FlatList	Efficient rendering of large lists
+♾️ Pagination	10 items per request
+🛑 Request Cancellation	AbortController for search
+🎨 Memoized Styles	StyleSheet.create + useMemo
+🧩 Component Splitting	Small, focused components
+🪝 Custom Hooks	Isolated API logic
+⏳ Skeleton Loaders	Shimmer effect during loading
+🔄 useCallback	Memoized function references
+🎯 useMemo	Computed value caching
+🎨 Theming System
+Light & Dark theme support with automatic device detection:
 
-Duplicate request prevention
+typescript
+// ThemeContext.tsx
+const { theme, isDark } = useAppTheme();
+Features:
 
-⚡ Performance Considerations
+✅ Automatic system theme detection
 
-FlatList used for large lists
+✅ Real-time theme switching
 
-Infinite scroll pagination
+✅ Navigation theme integration
 
-Request cancellation
+✅ Theme-aware style factories
 
-Memoized styles
-
-Component-level separation
-
-Custom hooks for API logic
-
-Skeleton loading components
-
-Avoided unnecessary re-renders
-
-🎨 Theming
-
-Light & Dark theme support
-
-ThemeContext based system
-
-Navigation theme integration
-
-Theme-aware styles
+✅ No manual toggle needed
 
 🧱 Project Structure
+text
 src/
-├── components
-├── contexts
-├── endpoints
-├── features (Redux slices)
-├── hooks (API hooks)
-├── navigation
-├── screens
-├── services
-├── store
-├── styles
-├── theme
+├── 📁 components
+│   ├── 📁 common          # Reusable Button, Icon, etc.
+│   ├── 📁 HomeScreen      # ProductCard, Categories, RatingStars
+│   ├── 📁 Loading         # Skeleton loaders, shimmer effects
+│   ├── 📁 ProductDetails  # Gallery, specs, reviews, bottom actions
+│   ├── 📁 Cart            # Order confirmation popup
+│   └── 📁 TopNavBar       # Animated navigation bar
+├── 📁 contexts            # ThemeContext, LoadingContext
+├── 📁 endpoints           # API endpoint configurations
+├── 📁 features            # Redux slices (cart, counter)
+├── 📁 hooks              # Custom API hooks with AbortController
+│   └── 📁 endpoints      # use_GET_PRODUCTS, use_GET_SEARCH, etc.
+├── 📁 navigation         # RootNavigator, types
+├── 📁 screens            # Home, Search, ProductDetails, Cart, Info
+├── 📁 services          # Axios apiClient configuration
+├── 📁 store             # Redux store configuration
+├── 📁 styles            # Component-specific styles
+└── 📁 theme             # Colors, navigation theme, types
+🚀 How To Run The Project
+Prerequisites
+Node.js 18+
 
+React Native CLI
 
-Architecture focuses on:
+Android Studio / Xcode
 
-Separation of concerns
+Watchman
 
-Reusable components
-
-API hooks isolation
-
-Scalable folder design
-
-▶️ How To Run The Project
-1️⃣ Install dependencies
+1️⃣ Install Dependencies
+bash
 npm install
-
-2️⃣ Start Metro
+2️⃣ Install iOS Pods (First time only)
+bash
+cd ios && pod install && cd ..
+3️⃣ Start Metro Bundler
+bash
 npm start
-
-3️⃣ Run Android
+# or
+npx react-native start --reset-cache
+4️⃣ Run on Android
+bash
 npm run android
-
-4️⃣ Run iOS
-
-First time only:
-
-cd ios
-pod install
-cd ..
-
-
-Then:
-
+# or
+npx react-native run-android
+5️⃣ Run on iOS
+bash
 npm run ios
+# or
+npx react-native run-ios
+🔧 Environment Configuration
+Create a .env file in the root directory:
 
-🔧 Environment Config
-
-Environment-based API config:
-
+env
 BASE_URL=https://dummyjson.com
+Babel Configuration (babel.config.js):
 
+javascript
+module.exports = {
+  presets: [
+    'module:@react-native/babel-preset',
+    ['module:react-native-dotenv', {
+      moduleName: '@env',
+      path: '.env',
+    }],
+  ],
+};
+TypeScript Declaration (src/env.d.ts):
 
-Endpoints are built using a centralized config file.
-
-🧪 Real-World Handling Implemented
-
-Loading states
-
-Skeleton loaders
-
-API error handling
-
-Empty states
-
-Retry-safe requests
-
-AbortController support
-
-Safe async flows
-
-Guarded pagination calls
-
+typescript
+declare module '@env' {
+  export const BASE_URL: string;
+}
+🧪 Real-World Handling
+Scenario	Implementation
+⏳ Loading	Skeleton loaders with shimmer animation
+❌ API Error	User-friendly error messages
+📭 Empty State	Custom empty state components
+🔄 Retry	Refresh capability on error
+🛑 Request Race	AbortController cancellation
+⚡ Safe Async	isMounted ref pattern
+🛡️ Pagination Guards	Prevent duplicate calls
+📱 Responsive	Platform-specific styling
 🧠 Key Technical Decisions
-
-Redux Toolkit chosen for predictable global state
-
-Custom API hooks for separation of data logic
-
-AsyncStorage used for persistence without heavy libraries
-
-FlatList + pagination for performance
-
-ThemeContext instead of UI libraries to meet constraints
-
-Endpoint config centralization for maintainability
-
-Modular component design for reuse
-
+Decision	Rationale
+Redux Toolkit	Predictable global state, devtools, minimal boilerplate
+Custom API Hooks	Separation of data fetching logic from UI
+AsyncStorage	Lightweight persistence without Redux-persist complexity
+FlatList + Pagination	Optimal performance for large datasets
+ThemeContext	Custom solution to meet "no UI libraries" constraint
+Endpoint Config	Centralized API management for maintainability
+Modular Components	Reusable, testable, single-responsibility design
+AbortController	Prevents memory leaks and race conditions
 🔮 Improvements With More Time
+🔄 Redux-persist - Full state persistence across restarts
 
-Redux-persist integration
+📦 Offline Caching - IndexedDB or MMKV for offline-first experience
 
-Offline caching layer
+🧪 Unit & Integration Tests - Jest + React Native Testing Library
 
-Unit & integration tests
+⌨️ Debounced Search Hook - Reusable useDebounce hook
 
-Debounced search input hook
+🖼️ Image Optimization - FastImage with progressive loading
 
-Image caching optimization
+♿ Accessibility - Screen reader support, accessible labels
 
-Better accessibility support
+🌐 Network Retry - Exponential backoff for failed requests
 
-Network retry strategy
+🔽 Pull-to-Refresh - Refresh indicator for all lists
 
-Pull-to-refresh for lists
+📊 Analytics - Screen views, user actions tracking
+
+🚀 Code Push - Over-the-air updates
